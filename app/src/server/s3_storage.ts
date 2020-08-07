@@ -39,22 +39,7 @@ export class S3Storage extends Storage {
     this.region = info[0]
     this.bucketName = bucketPath[0]
 
-    /**
-     * To prevent requests hanging from invalid credentials,
-     * Only check local credential services (not EC2/ECS ones)
-     * See here for the difference from default:
-     * https://docs.aws.amazon.com/AWSJavaScriptSDK/
-     * latest/AWS/CredentialProviderChain.html
-     */
-    const chain = new AWS.CredentialProviderChain()
-    chain.providers = [
-      new AWS.EnvironmentCredentials('AWS'),
-      new AWS.EnvironmentCredentials('AMAZON'),
-      new AWS.SharedIniFileCredentials(),
-      new AWS.ProcessCredentials()]
-
     this.s3 = new AWS.S3({
-      credentialProvider: chain,
       httpOptions: { connectTimeout: 10000 }, maxRetries: 5
     })
   }
